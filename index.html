@@ -597,7 +597,7 @@ function renderAnalisis(){
     <div class="an-icon figura">⭐</div>
     <div class="an-content">
       <div class="an-cat figura">Figura del partido</div>
-      <div class="an-title">${mvp.nombre}${mvp.goles>0?": "+mvp.goles+" gol"+(mvp.goles>1?"es":""):mvp.ast>0?": "+mvp.ast+" asistencia"+(mvp.ast>1?"s",""):": "+mvp.toques_area+" toques en área"}</div>
+      <div class="an-title">${mvp.nombre}${mvp.goles>0?": "+mvp.goles+" gol"+(mvp.goles>1?"es":""):mvp.ast>0?": "+mvp.ast+" asistencia"+(mvp.ast>1?"s":""):": "+mvp.toques_area+" toques en área"}</div>
       <div class="an-text">${mvp.nombre} (${mvp.equipo} · ${mvp.pos}) fue el factor diferencial. ${mvp.toques_area>10?mvp.toques_area+" toques en campo rival — récord del partido. ":""}${mvp.xG!==null&&mvp.goles>mvp.xG?"Superó su xG de "+mvp.xG.toFixed(2)+" con definición clínica. ":""}${mvp.regates>=5?mvp.regates+" regates completados, imparable en el 1v1. ":""}</div>
       <div class="an-stat figura">Rating UProstats: ${mvp.nota.toFixed(1)} / 10 · SO ${mvp.so.toFixed(1)} · SD ${mvp.sd.toFixed(1)}</div>
     </div>
@@ -644,16 +644,16 @@ function copyModal(){
 function exportJugador(){
   const j=DB.partidos[curP].jugadores[curSel];
   const p=DB.partidos[curP];
-  const texto=`⚽ JUGADOR DEL PARTIDO — ${p.nombre.toUpperCase()}
+  const texto=`JUGADOR DEL PARTIDO — ${p.nombre.toUpperCase()}
 
-🏆 ${j.nombre} | ${j.equipo} | ${j.pos}
+${j.nombre} | ${j.equipo} | ${j.pos}
 
-📊 Nota UProstats: ${j.nota.toFixed(1)}/10
-🔴 Score ofensivo: ${j.so.toFixed(1)}/10
-🔵 Score defensivo: ${j.sd.toFixed(1)}/10
+Nota UProstats: ${j.nota.toFixed(1)}/10
+Score ofensivo: ${j.so.toFixed(1)}/10
+Score defensivo: ${j.sd.toFixed(1)}/10
 
-${j.goles>0?"⚽ Goles: "+j.goles+"\n":""}${j.ast>0?"🎯 Asistencias: "+j.ast+"\n":""}${j.xG!==null?"📈 xG: "+j.xG.toFixed(2)+"\n":""}🤸 Regates: ${j.regates}
-💪 Duelos ganados: ${j.duelos}%
+${j.goles>0?"⚽ Goles: "+j.goles+"\n":""}${j.ast>0?"🎯 Asistencias: "+j.ast+"\n":""}${j.xG!==null?"xG: "+j.xG.toFixed(2)+"\n":""}Regates: ${j.regates}
+Duelos ganados: ${j.duelos}%
 
 #Mundial2026 #UProstats #${j.equipo.replace(/\s/g,"")}`;
   showModal("Tarjeta para Instagram","Copia y pega en tu post",texto);
@@ -680,7 +680,7 @@ function exportOnce(){
   const once=buildOnce();
   const rl=DB.rondas[curRound].label;
   const lista=once.map(p=>`${p.slot}: ${p.nombre} (${p.equipo}) — ${p.nota>0?p.nota.toFixed(1):"—"}`).join("\n");
-  const texto=`🌍 11 IDEAL UPROSTATS — ${rl.toUpperCase()}
+  const texto=`11 IDEAL UPROSTATS — ${rl.toUpperCase()}
 Formación: ${curForm}
 
 ${lista}
@@ -700,12 +700,12 @@ function exportOnceHilo(){
 
 1/ 🌍 Ya tenemos el 11 ideal de "${rl}" según los ratings de UProstats. Formación: ${curForm}. La figura: ${mvp?.nombre} (${mvp?.nota.toFixed(1)}/10) 👇
 
-2/ ⭐ TOP 3 del periodo:
+2/ TOP 3 del periodo:
 ${top3.map((p,i)=>`${i+1}. ${p.nombre} (${p.equipo}) — ${p.nota.toFixed(1)}`).join("\n")}
 
-3/ 📊 La selección usa scores ofensivos y defensivos ponderados por posición. Ningún central con 9 goles desplaza a un extremo de élite.
+3/ La seleccion usa scores ofensivos y defensivos ponderados por posición. Ningún central con 9 goles desplaza a un extremo de élite.
 
-4/ 🔁 ¿Quién cambiarías? El análisis completo en uprostats.com
+4/ ¿Quien cambiarías? El análisis completo en uprostats.com
 
 #Mundial2026 #UProstats #11Ideal`;
   showModal("Hilo del 11 Ideal","Copia y pega en Twitter/X",texto);
@@ -717,17 +717,17 @@ function exportAnalisis(){
   const mvp=jugs.reduce((a,b)=>a.nota>b.nota?a:b);
   const topOF=jugs.filter(j=>j.pos!=="GK").reduce((a,b)=>a.so>b.so?a:b);
   const topDF=jugs.filter(j=>j.pos!=="GK").reduce((a,b)=>a.sd>b.sd?a:b);
-  const texto=`📊 ANÁLISIS POST-PARTIDO — UPROSTATS
+  const texto=`ANALISIS POST-PARTIDO — UPROSTATS
 ${p.local} ${p.gl}–${p.gv} ${p.visitante} | ${p.jornada}
 
-⚡ OFENSIVO
+OFENSIVO
 xG: ${p.xgL} vs ${p.xgV} | Tiros: ${p.tirosL}-${p.tirosV}
 Mejor ofensivo: ${topOF.nombre} (SO ${topOF.so.toFixed(1)}/10)
 
-🛡 DEFENSIVO
+DEFENSIVO
 Mejor defensivo: ${topDF.nombre} (SD ${topDF.sd.toFixed(1)}/10, ${topDF.duelos}% duelos)
 
-⭐ FIGURA DEL PARTIDO
+FIGURA DEL PARTIDO
 ${mvp.nombre} (${mvp.equipo}) — ${mvp.nota.toFixed(1)}/10
 ${mvp.goles>0?"Goles: "+mvp.goles+" ":""}${mvp.ast>0?"Asist: "+mvp.ast+" ":""}${mvp.xG!==null?"xG: "+mvp.xG.toFixed(2):""}
 
@@ -755,15 +755,17 @@ function exportAnalisisHilo(){
   showModal("Hilo de análisis","Copia y pega en Twitter/X",texto);
 }
 
-document.getElementById("partido-sel").addEventListener("change",function(){
-  curP=parseInt(this.value);curSel=0;
-  renderMatchHdr();renderPGrid();
-  if(document.getElementById("panel-analisis").classList.contains("active"))renderAnalisis();
+document.addEventListener("DOMContentLoaded", function() {
+  renderMatchHdr();
+  renderPGrid();
+  renderPList();
+  
+  document.getElementById("partido-sel").addEventListener("change",function(){
+    curP=parseInt(this.value);curSel=0;
+    renderMatchHdr();renderPGrid();
+    if(document.getElementById("panel-analisis").classList.contains("active"))renderAnalisis();
+  });
 });
-
-renderMatchHdr();
-renderPGrid();
-renderPList();
 </script>
 </body>
 </html>
