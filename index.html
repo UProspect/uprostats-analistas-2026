@@ -73,7 +73,7 @@ select.partido-sel{
 }
 .team-name{
   font-family:'Oswald',sans-serif;font-size:22px;font-weight:600;
-  color:var(--text);letter-spacing:.02em;
+  color:#ffffff;letter-spacing:.02em;
 }
 .team-l{text-align:left}.team-r{text-align:right}
 .team-meta{font-size:11px;color:var(--muted);margin-top:4px}
@@ -410,8 +410,6 @@ select.partido-sel{
 </div>
 
 <div class="main">
-  <div id="match-hdr"></div>
-
   <!-- MAIN TABS -->
   <div class="main-tabs">
     <button class="main-tab active" onclick="showMainTab('partido')">
@@ -444,6 +442,8 @@ select.partido-sel{
         </select>
       </div>
     </div>
+
+    <div id="match-hdr"></div>
 
     <!-- SUB: JUGADOR DEL PARTIDO -->
     <div id="sub-jugador" class="panel active">
@@ -889,7 +889,7 @@ function renderAnalisis(){
     <div class="an-icon figura">⭐</div>
     <div class="an-content">
       <div class="an-cat figura">Figura del partido</div>
-      <div class="an-title">${mvp.nombre}${mvp.goles>0?": "+mvp.goles+" gol"+(mvp.goles>1?"es":""):mvp.ast>0?": "+mvp.ast+" asistencia"+(mvp.ast>1?"s",""):": "+mvp.toques_area+" toques en área"}</div>
+      <div class="an-title">${mvp.nombre}${mvp.goles>0?": "+mvp.goles+" gol"+(mvp.goles>1?"es":""):mvp.ast>0?": "+mvp.ast+" asistencia"+(mvp.ast>1?"s":""):": "+mvp.toques_area+" toques en área"}</div>
       <div class="an-text">${mvp.nombre} (${mvp.equipo} · ${mvp.pos}). ${mvp.toques_area>10?mvp.toques_area+" toques en campo rival. ":""}${mvp.xG!==null&&mvp.goles>mvp.xG?"Superó su xG de "+mvp.xG.toFixed(2)+". ":""}${mvp.regates>=5?mvp.regates+" regates completados. ":""}</div>
       <div class="an-stat figura">Rating: ${mvp.nota.toFixed(1)}/10 · SO ${mvp.so.toFixed(1)} · SD ${mvp.sd.toFixed(1)}</div>
     </div>
