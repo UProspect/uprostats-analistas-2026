@@ -64,7 +64,7 @@ select.partido-sel{
   background:linear-gradient(135deg,var(--navy2) 0%,var(--navy3) 100%);
   border:1px solid var(--border2);border-radius:16px;
   padding:20px 28px;margin-bottom:16px;
-  display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:20px;
+  display:grid;grid-template-columns:1fr auto 1fr;align-items:start;gap:20px;
   position:relative;overflow:hidden;
 }
 .match-card::before{
@@ -367,6 +367,55 @@ select.partido-sel{
   cursor:pointer;outline:none;
 }
 
+
+/* ═══════════════════════════════════════
+   STATS DEL PARTIDO
+═══════════════════════════════════════ */
+.stats-comparison{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.stat-row{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px}
+.stat-row-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.stat-val-l{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--text);min-width:36px}
+.stat-val-r{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--text);min-width:36px;text-align:right}
+.stat-name{font-family:'Oswald',sans-serif;font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:center;flex:1}
+.stat-bars{display:flex;height:8px;border-radius:4px;overflow:hidden;gap:2px}
+.stat-bar-l{background:var(--orange);border-radius:4px 0 0 4px;transition:width .6s}
+.stat-bar-r{background:var(--navy3);border-radius:0 4px 4px 0;transition:width .6s;margin-left:auto}
+.stat-bars-wrap{display:flex;height:8px;gap:2px}
+.stat-bar-l2{background:var(--orange);height:100%;border-radius:3px;transition:width .6s}
+.stat-bar-r2{background:var(--navy3);height:100%;border-radius:3px;transition:width .6s}
+
+.stats-secondary-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:16px}
+@media(min-width:600px){.stats-secondary-grid{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:900px){.stats-secondary-grid{grid-template-columns:repeat(4,1fr)}}
+
+.sstat-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:6px}
+.sstat-title{font-family:'Oswald',sans-serif;font-size:10px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);text-align:center}
+.sstat-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.sstat-team{font-size:10px;color:var(--muted);font-family:'Oswald',sans-serif;letter-spacing:.04em}
+.sstat-val{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--text)}
+.sstat-val.win{color:var(--orange)}
+.sstat-divider{width:1px;height:24px;background:var(--border)}
+
+.stats-match-mini{
+  background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 100%);
+  border-radius:12px;padding:14px 20px;margin-bottom:14px;
+  display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px;
+}
+.smt-team{font-family:'Oswald',sans-serif;font-size:16px;font-weight:600;color:#fff}
+.smt-l{text-align:left}.smt-r{text-align:right}
+.smt-score{font-family:'Bebas Neue',sans-serif;font-size:40px;color:var(--orange);letter-spacing:4px;text-align:center;line-height:1}
+.smt-meta{font-size:10px;color:rgba(255,255,255,.4);text-align:center;margin-top:3px;font-family:'Oswald',sans-serif;letter-spacing:.08em;text-transform:uppercase}
+
+
+.scorers-l,.scorers-r{display:flex;flex-direction:column;gap:3px;margin:5px 0 8px}
+.scorers-l{align-items:flex-start}
+.scorers-r{align-items:flex-end}
+.scorer{font-size:11px;color:rgba(255,255,255,.8);font-family:'DM Sans',sans-serif;line-height:1.3}
+.scorer-l{text-align:left}
+.scorer-r{text-align:right}
+.scorer-min{font-family:'Oswald',sans-serif;font-size:11px;color:var(--orange3);font-weight:500;margin-left:3px}
+.score-wrap{text-align:center;padding-top:4px}
+
 .powered{display:flex;align-items:center;gap:8px;margin-top:24px;justify-content:flex-end;padding-bottom:24px;opacity:.4}
 .powered:hover{opacity:.8;transition:opacity .2s}
 .powered-text{font-size:10px;color:var(--text2);font-family:'Oswald',sans-serif;letter-spacing:.08em;text-transform:uppercase}
@@ -415,7 +464,7 @@ select.partido-sel{
     <button class="main-tab active" onclick="showMainTab('partido')">
       ⚽ Partido por partido
     </button>
-    <button class="main-tab" id="tab-jornada" onclick="showMainTab('jornada')">
+<button class="main-tab" id="tab-jornada" onclick="showMainTab('jornada')">
       🏆 XI Ideal por jornada
     </button>
   </div>
@@ -426,7 +475,8 @@ select.partido-sel{
   <div id="panel-partido" class="panel active">
     <!-- Sub-tabs -->
     <div class="sub-tabs">
-      <button class="sub-tab active" onclick="showSubTab('jugador')">Jugador del partido</button>
+      <button class="sub-tab active" onclick="showSubTab('stats')">Stats del partido</button>
+      <button class="sub-tab" onclick="showSubTab('jugador')">Jugador del partido</button>
       <button class="sub-tab" onclick="showSubTab('analisis')">Análisis post-partido</button>
       <button class="sub-tab" onclick="showSubTab('xi-partido')">XI del partido</button>
     </div>
@@ -446,7 +496,7 @@ select.partido-sel{
     <div id="match-hdr"></div>
 
     <!-- SUB: JUGADOR DEL PARTIDO -->
-    <div id="sub-jugador" class="panel active">
+    <div id="sub-jugador" class="panel">
       <div class="slabel">Selecciona el jugador del partido</div>
       <div class="player-grid" id="pgrid"></div>
       <div id="pdetail"></div>
@@ -478,7 +528,17 @@ select.partido-sel{
       <div class="leg-grid" id="legenda-partido"></div>
       <button class="export-btn orange" onclick="exportXIPartido()">↓ Exportar XI del partido</button>
     </div>
+
+    <!-- SUB: STATS DEL PARTIDO -->
+    <div id="sub-stats" class="panel active">
+      <div class="slabel">Estadísticas del partido</div>
+      <div class="stats-comparison" id="stats-comparison"></div>
+      <div class="slabel">Resumen táctico</div>
+      <div class="stats-secondary-grid" id="stats-secondary"></div>
+      <button class="export-btn orange" style="margin-top:8px" onclick="exportStats()">↓ Exportar stats del partido</button>
+    </div>
   </div>
+
 
   <!-- ══════════════════════════════
        PANEL: XI IDEAL POR JORNADA
@@ -545,6 +605,8 @@ const DB={
   },
   partidos:[
     {id:"SIM001",nombre:"Brasil 3–1 México",jornada:"GF1",posL:58,posV:42,tirosL:18,tirosV:9,local:"Brasil",visitante:"México",gl:3,gv:1,estadio:"SoFi Stadium",xgL:2.1,xgV:0.8,
+     goleadores:{l:[{nombre:"Vinicius Jr.",min:23},{nombre:"Bruno G.",min:54},{nombre:"Martinelli",min:78}],v:[{nombre:"H. Lozano",min:67}]},
+     tirosPuerta:{l:8,v:3},tiroBloq:{l:4,v:3},corners:{l:7,v:3},faltas:{l:11,v:14},ta:{l:2,v:3},tr:{l:0,v:0},offside:{l:3,v:1},pases:{l:548,v:312},pasesPct:{l:88,v:72},ataqPel:{l:62,v:28},
      jugadores:[
       {id:"BRA011",nombre:"Vinicius Jr.",equipo:"Brasil",pos:"LW",mins:90,nota:7.9,so:9.4,sd:3.0,goles:1,ast:0,regates:8,duelos:75,tiros:7,interc:0,xG:0.9,toques_area:9},
       {id:"BRA008",nombre:"Paquetá",equipo:"Brasil",pos:"CAM",mins:78,nota:8.4,so:9.8,sd:5.3,goles:1,ast:1,regates:4,duelos:60,tiros:5,interc:1,xG:0.8,toques_area:7},
@@ -554,6 +616,8 @@ const DB={
       {id:"BRA006",nombre:"Casemiro",equipo:"Brasil",pos:"CDM",mins:90,nota:6.9,so:3.4,sd:9.1,goles:0,ast:0,regates:1,duelos:67,tiros:1,interc:4,xG:null,toques_area:1}
     ]},
     {id:"SIM002",nombre:"Argentina 2–0 Francia",jornada:"GF1",posL:52,posV:48,tirosL:14,tirosV:12,local:"Argentina",visitante:"Francia",gl:2,gv:0,estadio:"MetLife Stadium",xgL:1.8,xgV:1.4,
+     goleadores:{l:[{nombre:"Di María",min:31},{nombre:"Mac Allister",min:72}],v:[]},
+     tirosPuerta:{l:6,v:5},tiroBloq:{l:3,v:4},corners:{l:5,v:6},faltas:{l:13,v:11},ta:{l:1,v:2},tr:{l:0,v:0},offside:{l:2,v:3},pases:{l:498,v:465},pasesPct:{l:85,v:82},ataqPel:{l:54,v:48},
      jugadores:[
       {id:"ARG008",nombre:"Di María",equipo:"Argentina",pos:"CAM",mins:85,nota:8.9,so:9.7,sd:5.3,goles:1,ast:1,regates:5,duelos:60,tiros:5,interc:1,xG:0.8,toques_area:8},
       {id:"ARG009",nombre:"Mac Allister",equipo:"Argentina",pos:"CM",mins:90,nota:8.1,so:8.5,sd:7.5,goles:1,ast:0,regates:2,duelos:67,tiros:4,interc:1,xG:0.6,toques_area:6},
@@ -563,6 +627,8 @@ const DB={
       {id:"FRA006",nombre:"Kanté",equipo:"Francia",pos:"CDM",mins:90,nota:7.1,so:2.1,sd:9.5,goles:0,ast:0,regates:1,duelos:70,tiros:2,interc:4,xG:null,toques_area:2}
     ]},
     {id:"SIM003",nombre:"Brasil 1–1 Argentina",jornada:"GF2",posL:50,posV:50,tirosL:15,tirosV:14,local:"Brasil",visitante:"Argentina",gl:1,gv:1,estadio:"AT&T Stadium",xgL:1.4,xgV:1.6,
+     goleadores:{l:[{nombre:"Vinicius Jr.",min:34}],v:[{nombre:"Messi",min:78,tipo:"pen"}]},
+     tirosPuerta:{l:5,v:6},tiroBloq:{l:4,v:3},corners:{l:6,v:5},faltas:{l:12,v:13},ta:{l:2,v:1},tr:{l:0,v:0},offside:{l:2,v:2},pases:{l:512,v:508},pasesPct:{l:84,v:83},ataqPel:{l:51,v:53},
      jugadores:[
       {id:"ARG011b",nombre:"Messi",equipo:"Argentina",pos:"RW",mins:90,nota:8.6,so:9.5,sd:7.2,goles:1,ast:0,regates:5,duelos:75,tiros:4,interc:0,xG:0.7,toques_area:44},
       {id:"BRA011b",nombre:"Vinicius Jr.",equipo:"Brasil",pos:"LW",mins:90,nota:8.1,so:9.4,sd:3.6,goles:1,ast:0,regates:7,duelos:67,tiros:6,interc:0,xG:0.8,toques_area:9},
@@ -582,10 +648,17 @@ const rc=n=>n>=9?"#00E88F":n>=8?"#00C47A":n>=7?"#F5C842":n>=6?"#FF8C42":"#FF5A5A
 
 function renderMatchHdr(){
   const p=DB.partidos[curP];
+  const mkScorers=(arr,align)=>(arr||[]).map(g=>{
+    const tipo=g.tipo==='pen'?' <span style="opacity:.6">(P)</span>':g.tipo==='og'?' <span style="opacity:.6">(PP)</span>':'';
+    return `<div class="scorer scorer-${align}">⚽ ${g.nombre} <span class="scorer-min">${g.min}'</span>${tipo}</div>`;
+  }).join('');
+  const golesL=mkScorers(p.goleadores?.l,'l');
+  const golesV=mkScorers(p.goleadores?.v,'r');
   document.getElementById("match-hdr").innerHTML=`
   <div class="match-card">
     <div class="team-l">
       <div class="team-name">${p.local}</div>
+      ${golesL?`<div class="scorers-l">${golesL}</div>`:''}
       <div class="team-meta">${p.posL}% posesión · ${p.tirosL} tiros · xG ${p.xgL}</div>
     </div>
     <div class="score-wrap">
@@ -594,6 +667,7 @@ function renderMatchHdr(){
     </div>
     <div class="team-r">
       <div class="team-name">${p.visitante}</div>
+      ${golesV?`<div class="scorers-r">${golesV}</div>`:''}
       <div class="team-meta">xG ${p.xgV} · ${p.tirosV} tiros · ${p.posV}% posesión</div>
     </div>
   </div>`;
@@ -913,13 +987,107 @@ function showMainTab(id){
   if(id==="jornada"){renderPList();renderOnceAll();}
 }
 
+function renderStatsPanel(){
+  const p = DB.partidos[curP];
+  
+  // Main comparison stats
+  const mainStats = [
+    {label:"Posesión", l:p.posL, v:p.posV, unit:"%", type:"pct"},
+    {label:"Tiros totales", l:p.tirosL, v:p.tirosV, unit:"", type:"count"},
+    {label:"Tiros a puerta", l:p.tirosPuerta.l, v:p.tirosPuerta.v, unit:"", type:"count"},
+    {label:"xG", l:p.xgL, v:p.xgV, unit:"", type:"decimal"},
+    {label:"Pases completados", l:p.pases.l, v:p.pases.v, unit:"", type:"count"},
+    {label:"Precisión de pase", l:p.pasesPct.l, v:p.pasesPct.v, unit:"%", type:"pct"},
+    {label:"Ataques peligrosos", l:p.ataqPel.l, v:p.ataqPel.v, unit:"", type:"count"},
+  ];
+
+  document.getElementById("stats-comparison").innerHTML = mainStats.map(s => {
+    const total = s.l + s.v || 1;
+    const pctL = Math.round(s.l / total * 100);
+    const pctV = 100 - pctL;
+    const winL = s.l > s.v;
+    const winV = s.v > s.l;
+    const valL = s.type === "decimal" ? s.l.toFixed(2) : s.l + s.unit;
+    const valV = s.type === "decimal" ? s.v.toFixed(2) : s.v + s.unit;
+    return `
+    <div class="stat-row">
+      <div class="stat-row-header">
+        <div class="stat-val-l" style="color:${winL?"var(--orange)":"var(--text)"}">${valL}</div>
+        <div class="stat-name">${s.label}</div>
+        <div class="stat-val-r" style="color:${winV?"var(--navy3)":"var(--text)"}">${valV}</div>
+      </div>
+      <div style="display:flex;height:8px;gap:2px;border-radius:4px;overflow:hidden">
+        <div style="width:${pctL}%;background:var(--orange);border-radius:3px;transition:width .6s"></div>
+        <div style="width:${pctV}%;background:var(--navy3);border-radius:3px;margin-left:auto;transition:width .6s"></div>
+      </div>
+    </div>`;
+  }).join("");
+
+  // Secondary stats grid
+  const secStats = [
+    {label:"Tiros bloqueados", l:p.tiroBloq.l, v:p.tiroBloq.v},
+    {label:"Corners", l:p.corners.l, v:p.corners.v},
+    {label:"Faltas", l:p.faltas.l, v:p.faltas.v, lowWin:true},
+    {label:"Tarjetas amarillas", l:p.ta.l, v:p.ta.v, lowWin:true},
+    {label:"Tarjetas rojas", l:p.tr.l, v:p.tr.v, lowWin:true},
+    {label:"Fueras de juego", l:p.offside.l, v:p.offside.v, lowWin:true},
+    {label:"xG local vs visit.", l:p.xgL, v:p.xgV, type:"decimal"},
+    {label:"Eficiencia ofensiva", 
+     l: p.tirosL > 0 ? (p.gl/p.tirosL*100).toFixed(0) : 0, 
+     v: p.tirosV > 0 ? (p.gv/p.tirosV*100).toFixed(0) : 0,
+     unit:"%"},
+  ];
+
+  document.getElementById("stats-secondary").innerHTML = secStats.map(s => {
+    const winL = s.lowWin ? s.l < s.v : s.l > s.v;
+    const winV = s.lowWin ? s.v < s.l : s.v > s.l;
+    const valL = s.type === "decimal" ? Number(s.l).toFixed(2) : s.l + (s.unit||"");
+    const valV = s.type === "decimal" ? Number(s.v).toFixed(2) : s.v + (s.unit||"");
+    return `
+    <div class="sstat-card">
+      <div class="sstat-title">${s.label}</div>
+      <div class="sstat-row">
+        <div>
+          <div style="font-size:9px;color:var(--muted);font-family:'Oswald',sans-serif;margin-bottom:2px">${p.local.split(" ")[0]}</div>
+          <div class="sstat-val ${winL?"win":""}">${valL}</div>
+        </div>
+        <div class="sstat-divider"></div>
+        <div style="text-align:right">
+          <div style="font-size:9px;color:var(--muted);font-family:'Oswald',sans-serif;margin-bottom:2px">${p.visitante.split(" ")[0]}</div>
+          <div class="sstat-val ${winV?"win":""}">${valV}</div>
+        </div>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function exportStats(){
+  const p = DB.partidos[curStatsP];
+  const texto = `STATS DEL PARTIDO — UPROSTATS
+${p.local} ${p.gl}-${p.gv} ${p.visitante} | ${p.jornada}
+
+POSESION: ${p.posL}% - ${p.posV}%
+TIROS: ${p.tirosL} - ${p.tirosV} (a puerta: ${p.tirosPuerta.l}-${p.tirosPuerta.v})
+xG: ${p.xgL} - ${p.xgV}
+PASES: ${p.pases.l} (${p.pasesPct.l}%) - ${p.pases.v} (${p.pasesPct.v}%)
+CORNERS: ${p.corners.l} - ${p.corners.v}
+FALTAS: ${p.faltas.l} - ${p.faltas.v}
+TARJETAS: ${p.ta.l}A ${p.tr.l}R - ${p.ta.v}A ${p.tr.v}R
+ATAQUES PELIGROSOS: ${p.ataqPel.l} - ${p.ataqPel.v}
+
+#Mundial2026 #UProstats`;
+  showModal("Stats del partido", "Copia y pega en redes", texto);
+}
+
 function showSubTab(id){
-  document.querySelectorAll(".sub-tab").forEach((t,i)=>t.classList.toggle("active",["jugador","analisis","xi-partido"][i]===id));
+  document.querySelectorAll(".sub-tab").forEach((t,i)=>t.classList.toggle("active",["stats","jugador","analisis","xi-partido"][i]===id));
+  document.getElementById("sub-stats").classList.toggle("active",id==="stats");
   document.getElementById("sub-jugador").classList.toggle("active",id==="jugador");
   document.getElementById("sub-analisis").classList.toggle("active",id==="analisis");
   document.getElementById("sub-xi-partido").classList.toggle("active",id==="xi-partido");
   if(id==="analisis")renderAnalisis();
   if(id==="xi-partido")renderXIPartido();
+  if(id==="stats")renderStatsPanel();
 }
 
 // ── MODAL & EXPORT ──────────────────────────
@@ -987,16 +1155,20 @@ document.addEventListener("DOMContentLoaded",function(){
   renderMatchHdr();
   renderPGrid();
   renderPList();
+  renderStatsPanel();
   document.getElementById("partido-sel").addEventListener("change",function(){
     curP=parseInt(this.value);curSel=0;
     renderMatchHdr();renderPGrid();
     const activeSub=document.querySelector(".sub-tab.active");
     if(activeSub){
-      const idx=[...document.querySelectorAll(".sub-tab")].indexOf(activeSub);
-      if(idx===1)renderAnalisis();
-      if(idx===2)renderXIPartido();
+      const id=activeSub.getAttribute("onclick").match(/showSubTab\('([^']+)'\)/)[1];
+      if(id==="analisis")renderAnalisis();
+      if(id==="xi-partido")renderXIPartido();
+      if(id==="stats")renderStatsPanel();
+      if(id==="jugador")renderPGrid();
     }
   });
+
 });
 </script>
 </body>
