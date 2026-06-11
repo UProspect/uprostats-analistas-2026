@@ -416,6 +416,15 @@ select.partido-sel{
 .scorer-min{font-family:'Oswald',sans-serif;font-size:11px;color:var(--orange3);font-weight:500;margin-left:3px}
 .score-wrap{text-align:center;padding-top:4px}
 
+
+/* LOADING STATE */
+.loading-bar{height:3px;background:linear-gradient(90deg,var(--orange),var(--orange2),var(--orange));background-size:200% 100%;animation:loading-slide 1.2s infinite;border-radius:2px;margin-bottom:12px;display:none}
+.loading-bar.active{display:block}
+@keyframes loading-slide{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.last-update{font-family:'Oswald',sans-serif;font-size:10px;color:var(--muted);letter-spacing:.06em;text-align:right;margin-bottom:8px}
+.last-update span{color:var(--green2);font-weight:500}
+.no-data-msg{text-align:center;padding:40px 20px;color:var(--muted);font-family:'Oswald',sans-serif;font-size:14px}
+
 .powered{display:flex;align-items:center;gap:8px;margin-top:24px;justify-content:flex-end;padding-bottom:24px;opacity:.4}
 .powered:hover{opacity:.8;transition:opacity .2s}
 .powered-text{font-size:10px;color:var(--text2);font-family:'Oswald',sans-serif;letter-spacing:.08em;text-transform:uppercase}
@@ -459,6 +468,10 @@ select.partido-sel{
 </div>
 
 <div class="main">
+  <!-- LOADING BAR -->
+  <div class="loading-bar" id="loading-bar"></div>
+  <div class="last-update" id="last-update" style="display:none">Última actualización: <span id="update-time">—</span></div>
+
   <!-- MAIN TABS -->
   <div class="main-tabs">
     <button class="main-tab active" onclick="showMainTab('partido')">
@@ -591,7 +604,11 @@ select.partido-sel{
 </div>
 
 <script>
-const DB={
+// ── DATA — se carga desde Google Apps Script Web App ──────────────
+const API_URL = "https://script.google.com/macros/s/AKfycbwauIZC17_9_G1rdQX8craERMQA6URBPm5lAzssqfrl5kKmHN4j4xgmbTAZkqmT8s1LNQ/exec"; // ← pega tu URL aquí
+
+// Datos de simulación como fallback
+const DB_SIMULACION = {
   rondas:{
     GF1:{label:"Jornada 1 de grupos",partidos:[0,1],completa:true},
     GF2:{label:"Jornada 2 de grupos",partidos:[2],completa:true},
@@ -639,6 +656,80 @@ const DB={
     ]}
   ]
 };
+
+let DB = JSON.parse(JSON.stringify(DB_SIMULACION)); // copia mutable
+
+// Función que carga datos reales del Sheet via Apps Script Web App
+async function cargarDatosAPI() {
+  // Si la URL no está configurada, usa simulación
+  if (API_URL.includes("REEMPLAZA")) {
+    console.log("Usando datos de simulación — configura API_URL para datos reales");
+    return false;
+  }
+
+  const bar = document.getElementById("loading-bar");
+  const upd = document.getElementById("last-update");
+  bar.classList.add("active");
+
+  try {
+    const res = await fetch(API_URL, { cache: "no-cache" });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const data = await res.json();
+
+    if (data.error) throw new Error(data.error);
+    if (!data.partidos || data.partidos.length === 0) {
+      console.log("API respondió pero sin partidos — usando simulación");
+      bar.classList.remove("active");
+      return false;
+    }
+
+    // Actualizar DB con datos reales
+    DB.partidos = data.partidos;
+
+    // Actualizar rondas según jornadas reales
+    const jornadasVistas = new Set(data.partidos.map(p => p.jornada));
+    Object.keys(DB.rondas).forEach(key => {
+      DB.rondas[key].partidos = data.partidos
+        .map((p,i) => i)
+        .filter(i => {
+          const p = data.partidos[i];
+          if (key === "TORNEO") return true;
+          if (key === "GF1") return p.jornada === "GF1";
+          if (key === "GF2") return p.jornada === "GF2";
+          if (key === "GF3") return p.jornada === "GF3";
+          if (key === "R32") return p.jornada === "R32";
+          if (key === "R16") return p.jornada === "R16";
+          if (key === "QF")  return p.jornada === "QF";
+          if (key === "SF")  return p.jornada === "SF";
+          if (key === "F")   return p.jornada === "F" || p.jornada === "3RD";
+          return false;
+        });
+      DB.rondas[key].completa = DB.rondas[key].partidos.length > 0;
+    });
+
+    // Actualizar selector de partido
+    const sel = document.getElementById("partido-sel");
+    sel.innerHTML = DB.partidos.map((p,i) =>
+      `<option value="${i}">${p.nombre} · ${p.jornada}</option>`
+    ).join("");
+
+    // Mostrar timestamp
+    const ts = new Date(data.timestamp);
+    const hora = ts.toLocaleTimeString("es-PR", {hour:"2-digit", minute:"2-digit"});
+    const fecha = ts.toLocaleDateString("es-PR", {day:"2-digit", month:"short"});
+    document.getElementById("update-time").textContent = `${fecha} ${hora}`;
+    upd.style.display = "block";
+
+    bar.classList.remove("active");
+    console.log(`✅ Datos cargados: ${data.partidos.length} partidos (${data.timestamp})`);
+    return true;
+
+  } catch(err) {
+    bar.classList.remove("active");
+    console.warn("No se pudo cargar datos del Sheet, usando simulación:", err.message);
+    return false;
+  }
+}
 
 const FORMS={"4-3-3":[["GK"],["LB","CB","CB","RB"],["CDM","CM","CAM"],["LW","ST","RW"]],"4-4-2":[["GK"],["LB","CB","CB","RB"],["LM","CM","CM","RM"],["ST","ST"]],"3-5-2":[["GK"],["CB","CB","CB"],["LWB","CM","CDM","CM","RWB"],["ST","ST"]],"4-2-3-1":[["GK"],["LB","CB","CB","RB"],["CDM","CDM"],["LW","CAM","RW"],["ST"]],"5-3-2":[["GK"],["LWB","CB","CB","CB","RWB"],["CM","CDM","CM"],["ST","ST"]]};
 const POS_MAP={GK:["GK"],CB:["CB"],LB:["LB"],RB:["RB"],LWB:["LB","LWB"],RWB:["RB","RWB"],CDM:["CDM","CM"],CM:["CM","CDM","CAM"],LM:["LW","LM","CAM"],RM:["RW","RM","CAM"],CAM:["CAM","CM"],LW:["LW","CAM"],RW:["RW","CAM"],ST:["ST","CF","LW","RW"]};
@@ -1151,11 +1242,16 @@ function exportXIPartido(){
     `XI DEL PARTIDO — ${p.nombre.toUpperCase()}\nFormación: ${curFormPartido}\n\n${lista}\n\n#Mundial2026 #UProstats`);
 }
 
-document.addEventListener("DOMContentLoaded",function(){
+document.addEventListener("DOMContentLoaded", async function(){
+  // Intentar cargar datos reales del Sheet
+  await cargarDatosAPI();
+
+  // Renderizar con lo que haya (real o simulación)
   renderMatchHdr();
   renderPGrid();
   renderPList();
   renderStatsPanel();
+
   document.getElementById("partido-sel").addEventListener("change",function(){
     curP=parseInt(this.value);curSel=0;
     renderMatchHdr();renderPGrid();
